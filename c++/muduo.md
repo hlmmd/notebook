@@ -55,3 +55,23 @@ struct has_no_destroy
 ## 类静态成员变量初始化
 
 **一定要在类外进行初始化，否则编译报错**
+
+## linux 时间戳函数
+
+linux 2038问题。(int 型时间戳)
+
+clock_gettime 精确到ns，优先使用。计算时注意将int转换成int64_t，否则可能溢出
+
+```cpp
+struct timespec t_;
+int64_t ms_;
+int64_t ns_;
+int64_t us_;
+clock_gettime(CLOCK_MONOTONIC, &t_);
+ms_ = static_cast<int64_t>(t_.tv_sec) * 1000 + t_.tv_nsec / 1000000;
+us_ = static_cast<int64_t>(t_.tv_sec) * 1000000 + t_.tv_nsec / 1000;
+ns_ = static_cast<int64_t>(t_.tv_sec) * 1000000000 + t_.tv_nsec;
+```
+
+gettimeofday 精确到us
+
