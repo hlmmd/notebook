@@ -75,3 +75,29 @@ ns_ = static_cast<int64_t>(t_.tv_sec) * 1000000000 + t_.tv_nsec;
 
 gettimeofday 精确到us
 
+CLOCK_MONOTONIC: 以绝对时间为准，获取的时间为系统重启到现在的时间，更改系统时间对它没有影响。
+
+CLOCK_REALTIME: 相对时间，从1970.1.1到目前的时间。更改系统时间会更改获取的值。它以系统时间为坐标。
+
+## Condition
+
+条件变量允许我们通过通知进而实现线程同步
+
+条件变量可以履行发送者或接收者的角色。
+
+作为发送者，它可以通知一个或多个接收者。
+
+## CountDownLatch
+
+允许一个或多个线程一直等待，直到其他线程的操作执行完后再执行
+
+CountDownLatch是通过一个计数器来实现的，计数器的初始值为线程的数量。每当一个线程完成了自己的任务后，计数器的值就会减1。当计数器值到达0时，它表示所有的线程已经完成了任务，然后在闭锁上等待的线程就可以恢复执行任务。
+
+```cpp
+//Main thread start
+//Create CountDownLatch for N threads
+//Create and start N threads
+//Main thread wait on latch
+//N threads completes there tasks are returns
+//Main thread resume execution
+```
