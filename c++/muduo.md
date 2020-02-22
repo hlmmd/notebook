@@ -164,3 +164,8 @@ Thread &operator=(Thread &&t);
 ```
 
 ## 线程池
+
+ThreadPool.cc中，start函数确定了初始启动线程数量（固定，不会自动扩容缩容）
+
+双端队列queue_用于存储task，notEmpty_条件变量用来通知线程池执行task，notFull_通知线程池可以继续添加任务。
+
