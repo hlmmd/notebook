@@ -169,3 +169,6 @@ ThreadPool.cc中，start函数确定了初始启动线程数量（固定，不�
 
 双端队列queue_用于存储task，notEmpty_条件变量用来通知线程池执行task，notFull_通知线程池可以继续添加任务。
 
+## std::bind
+
+在bind中，如果要传递一个引用需要使用std::ref，常量引用为std::cref
