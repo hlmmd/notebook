@@ -50,3 +50,25 @@ OO和OB
 OO: object oriented 面向对象。更灵活，支持多态
 
 OB: object based 基于对象。效率更高，速度快，结构紧凑，但缺乏弹性。没有virtual
+
+## 构造函数语意学
+
+* implicit
+* explicit
+* trivial
+* nontrivial
+* memberwise
+* bitwise
+* semantics
+
+conversion运算符
+
+Schwarz Error
+
+explicit关键字
+
+阻止单一参数的构造函数被当作一个转换构造函数(conversion)
+
+explicit关键字只对有一个参数的类构造函数有效, 如果类构造函数参数大于或等于两个时, 是不会产生隐式转换的, 所以explicit关键字也就无效了
+
+但是将拷贝构造函数声明成explicit并不是良好的设计，一般只将有单个参数的constructor声明为explicit，而copy constructor不要声明为explicit.
