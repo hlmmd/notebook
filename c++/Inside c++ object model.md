@@ -72,3 +72,25 @@ explicit关键字
 explicit关键字只对有一个参数的类构造函数有效, 如果类构造函数参数大于或等于两个时, 是不会产生隐式转换的, 所以explicit关键字也就无效了
 
 但是将拷贝构造函数声明成explicit并不是良好的设计，一般只将有单个参数的constructor声明为explicit，而copy constructor不要声明为explicit.
+
+带有默认构造的成员类对象
+
+如果class A内含一个或者一个以上的member class objects,那么class A的每一个constructor必须调用每一个member classes的default constructor。
+
+如果有多个member需要初始化，那么就按照声明顺序依次初始化。
+
+### copy构造
+
+bitwise copy semantic
+
+## Data语意学
+
+对于一个空类，编译器会安插进去一个char，使得一个class的两个object能在内存中获得独一无二的地址
+
+* 1.数据类型自身的对齐值：
+对于char型数据，其自身对齐值为1，对于short型为2，对于int,float,double类型，其自身对齐值为4，单位字节。
+* 2.结构体或者类的自身对齐值：其成员中自身对齐值最大的那个值。
+* 3.指定对齐值：#pragma pack (value)时的指定对齐值value。
+* 4.数据成员、结构体和类的有效对齐值：自身对齐值和指定对齐值中小的那个值。
+
+空虚基类
