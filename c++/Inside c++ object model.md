@@ -94,3 +94,69 @@ bitwise copy semantic
 * 4.数据成员、结构体和类的有效对齐值：自身对齐值和指定对齐值中小的那个值。
 
 空虚基类
+
+### Data Member的布局
+
+一般与access section无关（即private、public、protected)
+
+满足较晚出现的在对象中含有较高的地址
+
+vptr放在所有显示申明的member最后（也有一些编译器放在最前）
+
+### Data Member的存取
+
+每一个static member的存取都不会有任何时间或者空间上的额外负担
+
+例如果a是class A的对象，xx是A的静态成员，那么
+
+```cpp
+a.xx = 100;
+//会被转换成
+A::xx = 100;
+```
+
+解决两个class申明同一个名称的static member，使用**name-mangling**
+
+可以得到独一无二的名称，也能够轻松推导回原来的名称
+
+非静态成员必须要经过显示或隐式的class object，才能存取。
+
+this指针
+
+每个member的offset在编译时期就固定了
+
+但当使用指针访问，而其继承了虚基类时，只能在运行期确定？
+
+### 继承与Data Member
+
+在大部分编译器中，base class object 总是先出现，然后是derived class object。 但虚基类除外
+ 
+如何区分没有指向任何data member的指针和指向第一个data member的指针
+
+### 指向member的指针
+
+## Function语意学
+
+### member function调用方式
+
+nonstatic member function至少要和nonmember function有相同的效率
+
+编译器内部会将member函数实例对应地转化为nonmember函数 this指针
+
+static member function:
+
+* 没有this指针
+* 不能够直接存取其class中的nonstatic members
+* 不能够被申明为const、volatile或virtual
+* 不需要通过class object才被调用（但是可以这么调用）
+
+virtual member functions
+
+c++规定，当一个成员函数被声明为虚函数后，其**派生类中的同名函数都自动成为虚函数**。因此，在子类从新声明该虚函数时，可以加，也可以不加，但习惯上每一层声明函数时都加virtual,使程序更加清晰。
+
+在单一继承体系中，虚函数机制行为较好。
+
+多继承、虚继承的虚函数...
+
+### 函数的效能
+
