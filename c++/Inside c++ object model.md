@@ -160,3 +160,15 @@ c++规定，当一个成员函数被声明为虚函数后，其**派生类中的
 
 ### 函数的效能
 
+* inline
+* nonmember function
+* static member
+* nonstatic member
+* virtual member
+* virtual member多继承
+* virtual member虚继承
+
+### 指向Member Function的指针
+
+所有的nonstatic member function都需要对象地址（以this指出）
+
