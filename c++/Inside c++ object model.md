@@ -172,3 +172,15 @@ c++规定，当一个成员函数被声明为虚函数后，其**派生类中的
 
 所有的nonstatic member function都需要对象地址（以this指出）
 
+普通member function指针和nonmember function成本相同
+
+### inline Functions
+
+## 构造、析构、拷贝语意学
+
+用户需要定义一个pure virtual destructor，所以尽量不要把析构函数定义为纯虚函数
+
+尽量不用const修饰纯虚函数
+
+
+
