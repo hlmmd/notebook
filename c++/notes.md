@@ -148,7 +148,7 @@ A&& & 变成 A&
 A&& && 变成 A&&
 ```
 
-## move
+## move 
 
 移动构造函数。
 
@@ -162,6 +162,12 @@ std::move  将一个左值强制转化为右值引用，继而可以通过右值
 Thread(Thread &&t);
 Thread &operator=(Thread &&t);
 ```
+
+## forward 完美转发
+
+不管是T&&、左值引用、右值引用，std::forward都会按照原来的类型完美转发
+
+## remove_reference
 
 ## 线程池
 
@@ -191,3 +197,216 @@ public:
 ```cpp
 Derived(parms) : Base(args) { }
 ```
+
+## decltype
+
+decltype 关键字用于检查实体的声明类型或表达式的类型及值分类。语法：
+
+```cpp
+decltype ( expression )
+```
+
+decltype 使用
+
+```cpp
+// 尾置返回允许我们在参数列表之后声明返回类型
+template <typename It>
+auto fcn(It beg, It end) -> decltype(*beg)
+{
+    // 处理序列
+    return *beg;    // 返回序列中一个元素的引用
+}
+// 为了使用模板参数成员，必须用 typename
+template <typename It>
+auto fcn2(It beg, It end) -> typename remove_reference<decltype(*beg)>::type
+{
+    // 处理序列
+    return *beg;    // 返回序列中一个元素的拷贝
+}
+```
+
+## initializer_list 列表初始化
+
+用花括号初始化器列表初始化一个对象，其中对应构造函数接受一个 std::initializer_list 参数.
+
+initializer_list 使用
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <initializer_list>
+ 
+template <class T>
+struct S {
+    std::vector<T> v;
+    S(std::initializer_list<T> l) : v(l) {
+         std::cout << "constructed with a " << l.size() << "-element list\n";
+    }
+    void append(std::initializer_list<T> l) {
+        v.insert(v.end(), l.begin(), l.end());
+    }
+    std::pair<const T*, std::size_t> c_arr() const {
+        return {&v[0], v.size()};  // 在 return 语句中复制列表初始化
+                                   // 这不使用 std::initializer_list
+    }
+};
+ 
+template <typename T>
+void templated_fn(T) {}
+ 
+int main()
+{
+    S<int> s = {1, 2, 3, 4, 5}; // 复制初始化
+    s.append({6, 7, 8});      // 函数调用中的列表初始化
+ 
+    std::cout << "The vector size is now " << s.c_arr().second << " ints:\n";
+ 
+    for (auto n : s.v)
+        std::cout << n << ' ';
+    std::cout << '\n';
+ 
+    std::cout << "Range-for over brace-init-list: \n";
+ 
+    for (int x : {-1, -2, -3}) // auto 的规则令此带范围 for 工作
+        std::cout << x << ' ';
+    std::cout << '\n';
+ 
+    auto al = {10, 11, 12};   // auto 的特殊规则
+ 
+    std::cout << "The list bound to auto has size() = " << al.size() << '\n';
+ 
+//    templated_fn({1, 2, 3}); // 编译错误！“ {1, 2, 3} ”不是表达式，
+                             // 它无类型，故 T 无法推导
+    templated_fn<std::initializer_list<int>>({1, 2, 3}); // OK
+    templated_fn<std::vector<int>>({1, 2, 3});           // 也 OK
+}
+```
+
+## 如何定义一个只能在堆上（栈上）生成对象的类？
+
+### 只能在堆上
+
+方法：将析构函数设置为私有
+
+原因：C++ 是静态绑定语言，编译器管理栈上对象的生命周期，编译器在为类对象分配栈空间时，会先检查类的析构函数的访问性。若析构函数不可访问，则不能在栈上创建对象。
+
+### 只能在栈上
+
+方法：将 new 和 delete 重载为私有
+
+原因：在堆上生成对象，使用 new 关键词操作，其过程分为两阶段：第一阶段，使用 new 在堆上寻找可用内存，分配给对象；第二阶段，调用构造函数生成对象。将 new 操作设置为私有，那么第一阶段就无法完成，就不能够在堆上生成对象。
+
+## 智能指针
+
+```cpp
+#include <memory>
+```
+
+### shared_ptr
+
+多个智能指针可以共享同一个对象，对象的最末一个拥有着有责任销毁对象，并清理与该对象相关的所有资源。
+
+支持定制型删除器（custom deleter），可防范 Cross-DLL 问题（对象在动态链接库（DLL）中被 new 创建，却在另一个 DLL 内被 delete 销毁）、自动解除互斥锁
+
+### weak_ptr
+
+weak_ptr 允许你共享但不拥有某对象，一旦最末一个拥有该对象的智能指针失去了所有权，任何 weak_ptr 都会自动成空（empty）。因此，在 default 和 copy 构造函数之外，weak_ptr 只提供 “接受一个 shared_ptr” 的构造函数。
+
+可打破环状引用（cycles of references，两个其实已经没有被使用的对象彼此互指，使之看似还在 “被使用” 的状态）的问题
+
+### unique_ptr
+
+unique_ptr 是 C++11 才开始提供的类型，是一种在异常时可以帮助避免资源泄漏的智能指针。采用独占式拥有，意味着可以确保一个对象和其相应的资源同一时间只被一个 pointer 拥有。一旦拥有着被销毁或编程 empty，或开始拥有另一个对象，先前拥有的那个对象就会被销毁，其任何相应资源亦会被释放。
+
+unique_ptr 用于取代 auto_ptr
+
+## 强制类型转换运算符
+
+static_cast
+dynamic_cast
+const_cast
+reinterpret_cast
+
+## 运行时类型信息 (RTTI)
+
+### dynamic_cast
+用于多态类型的转换
+
+### typeid
+typeid 运算符允许在运行时确定对象的类型
+
+type_id 返回一个 type_info 对象的引用
+
+如果想通过基类的指针获得派生类的数据类型，基类必须带有虚函数
+只能获取对象的实际类型
+
+### type_info
+
+type_info 类描述编译器在程序中生成的类型信息。 此类的对象可以有效存储指向类型的名称的指针。 type_info 类还可存储适合比较两个类型是否相等或比较其排列顺序的编码值。 类型的编码规则和排列顺序是未指定的，并且可能因程序而异。
+
+头文件：typeinfo
+
+### typeid、type_info 使用
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Flyable                       // 能飞的
+{
+public:
+    virtual void takeoff() = 0;     // 起飞
+    virtual void land() = 0;        // 降落
+};
+class Bird : public Flyable         // 鸟
+{
+public:
+    void foraging() {...}           // 觅食
+    virtual void takeoff() {...}
+    virtual void land() {...}
+    virtual ~Bird(){}
+};
+class Plane : public Flyable        // 飞机
+{
+public:
+    void carry() {...}              // 运输
+    virtual void takeoff() {...}
+    virtual void land() {...}
+};
+
+class type_info
+{
+public:
+    const char* name() const;
+    bool operator == (const type_info & rhs) const;
+    bool operator != (const type_info & rhs) const;
+    int before(const type_info & rhs) const;
+    virtual ~type_info();
+private:
+    ...
+};
+
+void doSomething(Flyable *obj)                 // 做些事情
+{
+    obj->takeoff();
+
+    cout << typeid(*obj).name() << endl;        // 输出传入对象类型（"class Bird" or "class Plane"）
+
+    if(typeid(*obj) == typeid(Bird))            // 判断对象类型
+    {
+        Bird *bird = dynamic_cast<Bird *>(obj); // 对象转化
+        bird->foraging();
+    }
+
+    obj->land();
+}
+
+int main(){
+	Bird *b = new Bird();
+	doSomething(b);
+	delete b;
+	b = nullptr;
+	return 0;
+}
+```
+
