@@ -413,3 +413,15 @@ int main(){
 ## lambda表达式
 
 捕获
+
+## any
+
+boost::any （c++17中被引入标准库）
+
+相比于void*增加了对类型的判断，更安全
+
+any可以存储任意的类型，并能通过any_cast将any类型转化成原本的类型
+
+实现：存储一个placeholder指针（智能指针？），利用template、多态、typeid等来存储不同类型的变量。any_cast是any的友元函数，可以进行指针转换，失败返回nullptr。也可以进行值转换，失败抛出bad_any_cast异常
+
+## 
