@@ -11,3 +11,9 @@ http_load
 JMeter
 
 ### 案例
+
+## 服务器性能剖析
+
+profiling
+
+什么是性能？响应时间
