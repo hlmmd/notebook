@@ -200,8 +200,18 @@ where条件执行结果：
 
 分区表
 
+……
 
+## 优化服务器设置
 
+Mysql配置文件位置：/etc/my.cnf /etc/mysql/my.cnf
 
+```bash
+#查找mysql可执行文件位置
+which mysqld
 
+#查找mysql默认配置文件位置
+/path/to/mysqld --verbose --help |grep -A 1 'Default options'
+```
 
+……
