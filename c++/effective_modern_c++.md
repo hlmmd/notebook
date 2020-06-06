@@ -40,4 +40,12 @@ ClassName() = delete;
 
 ## 17：理解特种成员函数的生成机制
 
+## 18：使用std::unique_ptr管理具备专属所有权的资源
 
+## 19：使用std::shared_ptr管理具备共享所有权的资源
+
+## 20：对于类似std::shared_ptr但有可能悬空的指针使用std::weak_ptr
+
+## 21：优先选用std::make_unique和std::make_shared，而非直接使用new
+
+## 22：使用Pimpl习惯用法时，将特殊成员函数的定义放到实现文件中
