@@ -118,4 +118,10 @@ IP地址：
 ## 处理选项
 
 
+# regexone.com
 
+## decimal numbers
+
+```text
+^-?\d+(,\d+)*((\.\d+)?(e\d+)?)?$
+```
