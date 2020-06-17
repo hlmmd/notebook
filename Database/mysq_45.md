@@ -269,3 +269,45 @@ count()是一个聚合函数，对于返回的结果集，一行行地判断，�
 count(字段)<count(主键id)<count(1)≈count(*)
 ```
 
+## 15讲 答疑文章（一）：日志和索引相关问题
+
+……
+
+## 16讲 “orderby”是怎么工作的
+
+select city,name,age from t where city='杭州' order by name limit 1000  ;
+
+全字段排序
+
+* 初始化sort_buffer，确定放入name、city、age这三个字段；
+* 从索引city找到第一个满足city='杭州’条件的主键id，也就是图中的ID_X；
+* 到主键id索引取出整行，取name、city、age三个字段的值，存入sort_buffer中；
+* 从索引city取下一个记录的主键id；
+* 重复步骤3、4直到city的值不满足查询条件为止，对应的主键id也就是图中的ID_Y；
+* 对sort_buffer中的数据按照字段name做快速排序；
+* 按照排序结果取前1000行返回给客户端。
+
+按name排序”这个动作，可能在内存中完成，也可能需要使用外部排序，这取决于排序所需的内存和参数sort_buffer_size
+
+rowid排序
+
+max_length_for_sort_data，是MySQL中专门控制用于排序的行数据的长度的一个参数。它的意思是，如果单行的长度超过这个值，MySQL就认为单行太大，要换一个算法。
+
+* 初始化sort_buffer，确定放入两个字段，即name和id；
+* 从索引city找到第一个满足city='杭州’条件的主键id，也就是图中的ID_X；
+* 到主键id索引取出整行，取name、id这两个字段，存入sort_buffer中；
+* 从索引city取下一个记录的主键id；
+* 重复步骤3、4直到不满足city='杭州’条件为止，也就是图中的ID_Y；
+* 对sort_buffer中的数据按照字段name进行排序；
+* 遍历排序结果，取前1000行，并按照id的值回到原表中取出city、name和age三个字段返回给客户端。
+
+如果能够保证从city这个索引上取出来的行，天然就是按照name递增排序的话，是不是就可以不用再排序了呢？
+
+所以，我们可以在这个市民表上创建一个city和name的联合索引，对应的SQL语句是：
+
+alter table t add index city_user(city, name);
+
+Extra字段里面多了“Using index”，表示的就是使用了覆盖索引，性能上会快很多
+
+## 17讲 如何正确地显示随机消息
+
