@@ -102,7 +102,7 @@ int offset = x + y * blockDim.x * gridDim.x;
 
 共享内存和同步
 
-`__share__`关键字用于定义共享内存变量
+`__shared__`关键字用于定义共享内存变量
 
 `__syncthreads()` 确保线程块中的每个线程都执行完该函数之前的语句后，才会执行下一条语句
 
@@ -172,3 +172,78 @@ cudaEventDestroy(stop);
 ```
 
 cudaEventSynchronize() 事件同步函数，保证在某个事件之前的所有GPU工作都完成了
+
+## 纹理内存
+
+纹理内存是CUDA C程序中的另一种只读内存。
+
+纹理内存同样缓存在芯片上，针对内存访问模式中存在大量空间局部性的图形应用程序而设计的。
+
+定于纹理内存变量
+
+```cpp
+texture<float> texConstSrc;
+cudaBindTexture(NULL,texConstStc,data.dev_constSrc,imageSize);
+//cudaBindTexture将变量绑定到内存缓冲区
+cudaUnbindTexture(texConstStr);
+```
+
+纹理内存引用必须声明为文件作用域内的全局变量，因此在核函数中不再定义该参数，使用编译器内置函数tex1Dfetch()来获取
+
+二位纹理内存
+
+```cpp
+texture<float,2> texConstSrc;
+cudaChannelFormatDesc desc = cudaCreateChannelDesc<float>();
+cudaBindTexture2D(NULL,texConstStc,data.dev_constSrc,imageSize,desc,DIM,DIM,sizeof(float)*DIM);
+cudaUnBindTexture(texConstSrc);
+```
+
+使用tex2D的时候，不用担心发生溢出问题（返回边界值）
+
+
+在绑定的时候需要定义cudaChannelFormatDesc变量，使用cudaBindTexture2D函数。释放的函数同1d
+
+## 原子性
+
+计算功能集
+
+设置最小计算功能集的编译
+
+`nvcc -arch=sm_11` 在1.1或者更高版本的计算功能集才支持
+
+原子操作
+
+cudaMemset给GPU内存赋值
+
+```cpp
+cudaMemset(dev_histo, 0, SIZE, 256 * sizeof(int));
+```
+
+多线程对一块内存进行加操作，使用atomicAdd
+
+```cpp
+atomicAdd(&temp[buffer[i]], 1);
+```
+
+为了减少多线程对资源的竞争，可以使用共享内存
+
+## 流
+
+页锁定主机内存
+
+cudaHostAlloc()分配页锁定的主机内存，即操作系统不会对这块内存分页并交换到磁盘上，保证始终驻留在物理内存中
+
+cudaFreeHost()进行释放
+
+设备重叠：在执行CUDA C核函数的同时，还能再设备与主机之间执行复制操作
+
+cudaMemCpyAsync() 异步copy,函数返回时不知道复制操作是否完成。只有通过cudaHostAlloc分配的内存才能使用该函数
+
+在核函数调用的尖括号中还可以带一个流参数，此时核函数调用将是异步的。
+
+cudaStreamSynchronize()指定想要等待的流
+
+cudaStreamDestroy销毁流
+
+……
