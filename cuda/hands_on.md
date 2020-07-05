@@ -22,3 +22,37 @@ Shared Read and Write Fast No Each Block Block
 Constant Read only Slow Yes Host and All Threads Entire Program
 Texture Read only Slow Yes Host and All Threads Entire Program
 
+### Global memory
+
+All memories allocated using cudaMalloc will be a global memory.
+
+### Local memory and registers
+
+### Cache memory
+
+### Thread synchronization
+
+### Shared memory
+
+### Atomic operations
+
+atomicAdd
+
+### Constant memory
+
+NVIDIA hardware provides 64 KB of this constant memory
+
+cudaMemcpyToSymbol
+
+## Advanced Concepts in CUDA
+
+### CUDA Events
+
+### Error handling in CUDA
+
+CUDA-GDB
+
+## Getting Started with OpenCV with CUDA Support
+
+### Installation of OpenCV with CUDA support
+
