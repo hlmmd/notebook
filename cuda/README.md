@@ -58,3 +58,27 @@ OpenCL.lib
 ```
 
 此时vs能顺利编译运行cuda项目
+
+## opencv cuda
+
+### 源码下载
+
+[OpenCV源码](https://github.com/opencv/opencv)，当前最新版本为[4.3.0](https://github.com/opencv/opencv/archive/4.3.0.tar.gz)
+
+[opencv_contrib源码](https://github.com/opencv/opencv_contrib)，[4.3.0](https://github.com/opencv/opencv_contrib/archive/4.3.0.tar.gz)
+
+[cmake](https://cmake.org/download/)
+
+将源码进行解压，例解压至`E:\opencv\opencv-4.3.0`
+
+### 使用cmake和vs编译源码
+
+在cmake中设置好源码路径和build路径，点击configure。
+
+configure完成后，找到OPENCV_EXTRA_MODULES_PATH，将value设置为opencv_contrib\modules路径。重新configure一次。
+
+勾选cuda相关选项，点击generate。此时build目录下会产生OpenCV.sln，使用vs打开。
+
+在解决方案中，选择cmakeTargets->build All，右键生成。注意debug和release版本。
+
+编译生成的文件在build/install目录下。
