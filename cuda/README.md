@@ -82,3 +82,5 @@ configure完成后，找到OPENCV_EXTRA_MODULES_PATH，将value设置为opencv_c
 在解决方案中，选择cmakeTargets->build All，右键生成。注意debug和release版本。
 
 编译生成的文件在build/install目录下。
+
+## ubuntu
