@@ -84,3 +84,45 @@ configure完成后，找到OPENCV_EXTRA_MODULES_PATH，将value设置为opencv_c
 编译生成的文件在build/install目录下。
 
 ## ubuntu
+
+### 下载及编译
+
+使用opencv3.4.2版本。尝试了4.3.0，没有编译成功，没有继续研究了。
+
+[参考教程](https://medium.com/@bnarasapur/compile-opencv-with-cuda-from-the-source-1b98e9108a59)
+
+[opencv-3.4.2](https://github.com/opencv/opencv/archive/3.4.2.tar.gz)
+
+[opencv_contrib-3.4.2](https://github.com/opencv/opencv_contrib/archive/3.4.2.tar.gz)
+
+解压，假设都加压到**~/opencv/**目录下。
+
+```bash
+cd ~/opencv/opencv-3.4.2
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE \
+-D CMAKE_INSTALL_PREFIX=/usr/local \
+-D WITH_CUDA=ON \
+-D ENABLE_FAST_MATH=1 \
+-D CUDA_FAST_MATH=1 \
+-D WITH_CUBLAS=1 \
+-D INSTALL_PYTHON_EXAMPLES=ON \
+-D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.2/modules \
+-D BUILD_EXAMPLES=ON \
+-DBUILD_opencv_cudacodec=OFF ..
+make -j 4 #量力而行
+sudo make install
+sudo ldconfig
+```
+
+### 遇到的问题
+
+```
+fatal error: opencv2/xfeatures2d/cuda.hpp: No such file or directory
+```
+
+解决方法：
+
+在~/opencv/opencv-3.4.2/modules/stitching/CmakeLists.txt中添加
+INCLUDE_DIRECTORIES("～/opencv/opencv_contrib-3.4.2/modules/xfeatures2d/include")
