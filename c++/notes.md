@@ -425,3 +425,26 @@ any可以存储任意的类型，并能通过any_cast将any类型转化成原本
 实现：存储一个placeholder指针（智能指针？），利用template、多态、typeid等来存储不同类型的变量。any_cast是any的友元函数，可以进行指针转换，失败返回nullptr。也可以进行值转换，失败抛出bad_any_cast异常
 
 ## std::async
+
+```cpp
+#include <iostream>
+#include <functional>
+#include <future>
+using namespace std;
+
+void func(int x)
+{
+    cout << x << endl;
+}
+int main()
+{
+    auto f2 = std::async(
+        std::launch::async, [](int x, int y) {func(x);return y; }, 8, 10);
+    cout << f2.get() << endl;
+
+    auto f1 = std::async(std::launch::async, []() -> int { return 8; });
+    cout << f1.get() << endl;
+
+    return 0;
+}
+```
