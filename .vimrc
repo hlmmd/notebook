@@ -98,11 +98,11 @@ set foldclose=all
 """"""""""""""""""""""""""""""""""""
 """=>文字处理<="""
 """""""""""""""""""""""""""""""""""
+"使用空格来替换Tab"
+set expandtab
 "
 ""设置所有的Tab和缩进为4个空格"
 set tabstop=4
-"使用空格来替换Tab"
-set expandtab
 
 "设定<<和>>命令移动时的宽度为4"
 "set shiftwidth=4
@@ -116,7 +116,7 @@ set smarttab
 "可使用autoindent命令的简写，即“:set ai”和“:set noai”
 ""还可以使用“:set ai sw=4”在一个命令中打开缩进并设置缩进级别
 set ai
-set cindent
+"set cindent
 
 "智能缩进"
 "set si
@@ -125,7 +125,7 @@ set cindent
 set wrap
 
 "设置软宽度"
-"set sw=4
+set sw=4
 "
 ""行内替换"
 set gdefault
