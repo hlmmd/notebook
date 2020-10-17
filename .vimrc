@@ -23,9 +23,9 @@ filetype indent on
 "set autoread
 "
 ""激活鼠标的使用"
-set mouse=a
-set selection=exclusive
-set selectmode=mouse,key
+"set mouse=a
+"set selection=exclusive
+"set selectmode=mouse,key
 
 "保存全局变量"
 "set viminfo+=!
