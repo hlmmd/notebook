@@ -38,6 +38,10 @@ MySQL 8.0版本直接将查询缓存的整块功能删掉了
 
 ## 02讲 日志系统：一条SQL更新语句是如何执行的
 
+与查询流程不一样的是，更新流程还涉及两个重要的日志模块，它们正是我们今天要讨论的主角：redo log（重做日志）和 binlog（归档日志）。
+
+WAL技术，WAL的全称是Write-Ahead Logging，它的关键点就是先写日志，再写磁盘
+
 redo log（重做日志）和 binlog（归档日志）
 
 * redo log是InnoDB引擎特有的；binlog是MySQL的Server层实现的，所有引擎都可以使用。
@@ -46,7 +50,35 @@ redo log（重做日志）和 binlog（归档日志）
 
 ## 03讲 事务隔离：为什么你改了我还看不见
 
-……
+查看mysql的隔离级别
+
+读未提交、读提交、可重复读、串行化
+
+```bash
+READ-UNCOMMIT
+READ-COMMIT
+REPEATABLE-READ
+SERIALIZABLE
+```
+
+```sql
+show variables like 'transaction_isolation';
+```
+
+数据库多版本并发控制（MVCC）
+
+避免使用长事务
+
+MYSQL 事务处理主要有两种方法：
+1、用 BEGIN, ROLLBACK, COMMIT来实现
+
+* BEGIN 开始一个事务
+* ROLLBACK 事务回滚
+* COMMIT 事务确认
+2、直接用 SET 来改变 MySQL 的自动提交模式:
+
+* SET AUTOCOMMIT=0 禁止自动提交
+* SET AUTOCOMMIT=1 开启自动提交
 
 ## 04讲 深入浅出索引（上）
 
