@@ -183,10 +183,12 @@ public:
 #include <vector>
 using namespace std;
 
+// 二维数组迭代器
+// 要求O(1)空间复杂度
 class Iterator
 {
 public:
-    Iterator(vector<vector<int>>* pdata);
+    Iterator(vector<vector<int>>* pData);
     bool HasNext();
     int GetNext();
 
